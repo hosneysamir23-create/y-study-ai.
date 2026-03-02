@@ -6,37 +6,52 @@ from datetime import datetime
 
 st.set_page_config(page_title="مساعد الملازم الذكي")
 
-# --- ميزة حفظ تسجيل الدخول ---
+# --- قائمة الأرقام المحظورة (ضيف هنا أي رقم عايز تحظره) ---
+BANNED_NUMBERS = ["01000000000", "0123456789"] 
+
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
-def check_password():
-    if st.session_state["pwd_input"] == "Hh1112007@":
+def check_login():
+    phone = st.session_state["phone_input"]
+    pwd = st.session_state["pwd_input"]
+    
+    # 1. التأكد من الحظر
+    if phone in BANNED_NUMBERS:
+        st.error("🚫 عذراً، هذا الرقم محظور من استخدام التطبيق.")
+        return
+
+    # 2. التأكد من الباسورد
+    if pwd == "Hh1112007@":
         st.session_state["authenticated"] = True
-        # --- ميزة تسجيل مين دخل ---
+        # تسجيل الدخول بالرقم والوقت
         with open("log.txt", "a", encoding="utf-8") as f:
-            f.write(f"تم دخول مستخدم بنجاح في: {datetime.now()}\n")
+            f.write(f"دخول: {phone} | التاريخ: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
     else:
-        st.error("❌ الباسورد غلط يا بطل!")
+        st.error("❌ الباسورد غلط!")
 
-# --- واجهة الدخول ---
+# --- واجهة الدخول المعدلة ---
 if not st.session_state["authenticated"]:
-    st.title("🔐 تسجيل الدخول")
-    st.text_input("أدخل كلمة المرور", type="password", key="pwd_input", on_change=check_password)
-    st.stop() # بيوقف البرنامج هنا لحد ما يدخل الباسورد صح
+    st.title("🔐 تسجيل دخول الطلاب")
+    st.text_input("رقم الموبايل", key="phone_input", placeholder="01xxxxxxxxx")
+    st.text_input("كلمة المرور", type="password", key="pwd_input")
+    st.button("دخول", on_click=check_login)
+    st.stop()
 
-# --- لو الباسورد صح، بقية البرنامج بيظهر هنا ---
-st.title("📚 مساعد الملازم (صور + PDF)")
+# --- البرنامج الرئيسي ---
+st.title("📚 مساعد الملازم الذكي")
 
-# زرار لمشاهدة السجل (ليك أنت بس)
-if st.sidebar.button("عرض سجل الدخول"):
-    try:
-        with open("log.txt", "r", encoding="utf-8") as f:
-            st.sidebar.text(f.read())
-    except:
-        st.sidebar.write("لا يوجد سجلات بعد.")
+# لوحة تحكم ليك أنت (مخفية في الجنب)
+with st.sidebar:
+    st.header("⚙️ لوحة التحكم")
+    if st.button("عرض سجل المستخدمين"):
+        try:
+            with open("log.txt", "r", encoding="utf-8") as f:
+                st.text(f.read())
+        except:
+            st.write("لا يوجد سجلات.")
 
-f = st.file_uploader("ارفع الملزمة أو صورة الصفحة", type=["pdf", "jpg", "jpeg", "png"])
+f = st.file_uploader("ارفع الملزمة أو الصورة", type=["pdf", "jpg", "jpeg", "png"])
 
 if f:
     genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
