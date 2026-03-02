@@ -12,7 +12,7 @@ if pwd == "4455":
     q = st.chat_input("اسألني أي سؤال عن الملزمة...")
     if q:
              genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
-              model = genai.GenerativeModel('gemini-1.5-flash')
+     model = genai.GenerativeModel('gemini-1.5-flash')
                res = model.generate_content(f"أجب بالعربية: {text[:10000]}\nالسؤال: {q}")
                  with st.chat_message("assistant"):
                   st.write(res.text)
