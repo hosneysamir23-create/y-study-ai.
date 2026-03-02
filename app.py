@@ -14,7 +14,7 @@ def check_login():
     phone = st.session_state["phone_input"]
 pwd = st.session_state["pwd_input"]
 if phone in BANNED_NUMBERS:
-st.error("🚫 هذا الرقم محظور")
+        st.error("🚫 هذا الرقم محظور")
 elif pwd == "Hh1112007@":
 st.session_state["authenticated"] = True
 with open("log.txt", "a", encoding="utf-8") as f:
