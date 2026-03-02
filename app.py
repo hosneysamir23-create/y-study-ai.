@@ -19,10 +19,10 @@ def check():
         st.error("Wrong Password")
 
 if not st.session_state["auth"]:
-st.title("Login")
-st.text_input("Phone", key="p_in")
-st.text_input("Password", type="password", key="pw_in")
-st.button("Login", on_click=check)
+    st.title("Login")
+    st.text_input("Phone", key="p_in")
+    st.text_input("Password", type="password", key="pw_in")
+    st.button("Login", on_click=check)
 st.stop()
 
 st.title("Study Assistant")
