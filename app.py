@@ -7,7 +7,7 @@ st.set_page_config(page_title="AI Study Assistant")
 
 BANNED_NUMBERS = ["01000000000"]
 
-if "authenticated" not in st.session_state:
+if "authenticated" not in st.session_state::
 st.session_state["authenticated"] = False
 
 def check_login():
