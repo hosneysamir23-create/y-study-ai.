@@ -19,7 +19,7 @@ elif pwd == "Hh1112007@":
         st.session_state["authenticated"] = True
 with open("log.txt", "a", encoding="utf-8") as f:
             f.write(f"Phone: {phone} | Time: {datetime.now()}\n")
-else:
+    else:
 st.error("❌ كلمة المرور خطأ")
 
 if not st.session_state["authenticated"]:
