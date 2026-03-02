@@ -32,12 +32,12 @@ if f:
     genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
     model = genai.GenerativeModel('gemini-1.5-flash')
     if f.type == "application/pdf":
-        reader = PyPDF2.PdfReader(f)
-        txt = "".join([p.extract_text() for p in reader.pages])
-        q = st.chat_input("Ask...")
-        if q:
-            r = model.generate_content(f"Answer in Arabic: {txt[:10000]} \n Q: {q}")
-            st.write(r.text)
+                reader = PyPDF2.PdfReader(f)
+                txt = "".join([p.extract_text() for p in reader.pages])
+                q = st.chat_input("Ask...")
+                if q:
+                    r = model.generate_content(f"Answer in Arabic: {txt[:10000]} \n Q: {q}")
+                    st.write(r.text)
     else:
         img = Image.open(f)
         st.image(img, width=300)
