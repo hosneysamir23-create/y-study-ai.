@@ -8,7 +8,7 @@ st.set_page_config(page_title="مساعد الملازم")
 # غير الرقم اللي تحت ده لأي باسورد تحبه
 pwd = st.text_input("أدخل كلمة المرور الجديدة", type="password")
 
-if pwd == "اكتب_الباسورد_الجديد_هنا":Hh1112007@ 
+if pwd == "Hh1112007@": 
     st.title("📚 مساعد الملازم (صور + PDF)")
     f = st.file_uploader("ارفع الملزمة أو صورة الصفحة", type=["pdf", "jpg", "jpeg", "png"])
     
