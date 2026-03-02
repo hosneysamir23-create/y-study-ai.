@@ -8,7 +8,7 @@ if pwd == "4455":
     import google.generativeai as genai
     pdf = PyPDF2.PdfReader(f)
     text = "".join([p.extract_text() for p in pdf.pages])
-      st.success("✅ تم تحميل الملزمة!")
+     st.success("✅ تم تحميل الملزمة!")
           q = st.chat_input("اسألني أي سؤال عن الملزمة...")
            if q:
              genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
