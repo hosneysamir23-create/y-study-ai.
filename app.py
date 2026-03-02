@@ -14,7 +14,7 @@ def check():
     if pw == "Hh1112007@":
         st.session_state["auth"] = True
         with open("log.txt", "a") as f:
-f.write(f"{p} - {datetime.now()}\n")
+            f.write(f"{p} - {datetime.now()}\n")
 else:
 st.error("Wrong Password")
 
