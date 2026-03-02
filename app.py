@@ -37,10 +37,10 @@ if f:
         if q:
             r = model.generate_content(f"Answer in Arabic: {txt[:10000]} \n Q: {q}")
             st.write(r.text)
-else:
-img = Image.open(f)
-st.image(img, width=300)
-q = st.chat_input("Ask...")
-if q:
-r = model.generate_content(["Explain in Arabic:", img, q])
-st.write(r.text)
+    else:
+        img = Image.open(f)
+        st.image(img, width=300)
+        q = st.chat_input("Ask...")
+        if q:
+            r = model.generate_content(["Explain in Arabic:", img, q])
+            st.write(r.text)
