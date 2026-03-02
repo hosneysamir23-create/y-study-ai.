@@ -18,9 +18,8 @@ if phone in BANNED_NUMBERS:
 elif pwd == "Hh1112007@":
         st.session_state["authenticated"] = True
 with open("log.txt", "a", encoding="utf-8") as f:
-            f.write(f"Phone: {phone} | Time: {datetime.now()}\n")
-    else:
-st.error("❌ كلمة المرور خطأ")
+            f.write(f"Phone: {phone} | Date: {datetime.now()}\n")
+      else:        st.error("❌ كلمة المرور خطأ")
 
 if not st.session_state["authenticated"]:
 st.title("🔐 تسجيل الدخول")
