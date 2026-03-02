@@ -11,7 +11,7 @@ if "authenticated" not in st.session_state:
   st.session_state["authenticated"] = False
 
 def check_login():
-phone = st.session_state["phone_input"]
+    phone = st.session_state["phone_input"]
 pwd = st.session_state["pwd_input"]
 if phone in BANNED_NUMBERS:
 st.error("🚫 هذا الرقم محظور")
