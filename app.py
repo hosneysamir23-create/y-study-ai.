@@ -6,7 +6,7 @@ from datetime import datetime
 st.set_page_config(page_title="AI Study")
 
 if "auth" not in st.session_state:
-st.session_state["auth"] = False
+    st.session_state["auth"] = False
 
 def check():
 p = st.session_state.get("p_in", "")
