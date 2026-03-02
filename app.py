@@ -16,7 +16,7 @@ text = "".join([p.extract_text() for p in pdf.pages])
 st.success("✅ تم التحميل!")
 q = st.chat_input("اسألني أي سؤال...")
 if q:
-genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
+  genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
 model = genai.GenerativeModel('gemini-1.5-flash')
 res = model.generate_content(f"أجب بالعربية: {text[:10000]}\nالسؤال: {q}")
 st.write(res.text)
