@@ -24,7 +24,7 @@ if not st.session_state["auth"]:
     st.text_input("Phone", key="p_in")
     st.text_input("Password", type="password", key="pw_in")
     st.button("Login", on_click=check)
-st.stop()
+    st.stop()
 
 st.title("Study Assistant")
 f = st.file_uploader("Upload", type=["pdf", "jpg", "png"])
