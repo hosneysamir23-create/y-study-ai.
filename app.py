@@ -3,53 +3,52 @@ import google.generativeai as genai
 from PIL import Image
 from datetime import datetime
 
-st.set_page_config(page_title="AI Study")
+st.set_page_config(page_title="AI Study Assistant")
 
-BANNED = ["01000000000"]
+BANNED_NUMBERS = ["01000000000"]
 
-if "auth" not in st.session_state:
-st.session_state["auth"] = False
+if "authenticated" not in st.session_state:
+st.session_state["authenticated"] = False
 
-def check():
-p = st.session_state["p_in"]
-pw = st.session_state["pw_in"]
-if p in BANNED:
-st.error("Access Denied")
-elif pw == "Hh1112007@":
-st.session_state["auth"] = True
-with open("log.txt", "a") as f:
-f.write(f"{p} - {datetime.now()}\n")
+def check_login():
+phone = st.session_state["phone_input"]
+pwd = st.session_state["pwd_input"]
+if phone in BANNED_NUMBERS:
+st.error("🚫 هذا الرقم محظور")
+elif pwd == "Hh1112007@":
+st.session_state["authenticated"] = True
+with open("log.txt", "a", encoding="utf-8") as f:
+f.write(f"Phone: {phone} | Time: {datetime.now()}\n")
 else:
-st.error("Wrong Password")
+st.error("❌ كلمة المرور خطأ")
 
-if not st.session_state["auth"]:
-st.title("Login Page")
-st.text_input("Mobile Number", key="p_in")
-st.text_input("Password", type="password", key="pw_in")
-st.button("Login", on_click=check)
+if not st.session_state["authenticated"]:
+st.title("🔐 تسجيل الدخول")
+st.text_input("رقم الموبايل", key="phone_input")
+st.text_input("كلمة المرور", type="password", key="pwd_input")
+st.button("دخول", on_click=check_login)
 st.stop()
 
-st.title("Student Assistant")
-if st.sidebar.button("Show Logs"):
-try:
-with open("log.txt", "r") as f: st.sidebar.text(f.read())
-except: st.sidebar.write("No logs.")
+st.title("📚 مساعد الملازم الذكي")
 
-f = st.file_uploader("Upload PDF or Photo", type=["pdf", "jpg", "png"])
+with st.sidebar:
+if st.button("سجل الدخول"):
+try:
+with open("log.txt", "r", encoding="utf-8") as f:
+st.text(f.read())
+except:
+st.write("لا يوجد سجل.")
+
+f = st.file_uploader("ارفع الملف", type=["pdf", "jpg", "jpeg", "png"])
+
 if f:
 genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
 model = genai.GenerativeModel('gemini-1.5-flash')
 if f.type == "application/pdf":
-reader = PyPDF2.PdfReader(f)
-txt = "".join([p.extract_text() for p in reader.pages])
-q = st.chat_input("Ask in Arabic...")
-if q:
-res = model.generate_content(f"Answer in Arabic: {txt[:10000]}\nQuestion: {q}")
-st.write(res.text)
+pdf = PyPDF2.PdfReader(f)
+content = "".join([p.extract_text() for p in pdf.pages if p.extract_text()])
+is_image = False
 else:
-img = Image.open(f)
-st.image(img, width=300)
-q = st.chat_input("Ask in Arabic...")
-if q:
-res = model.generate_content(["Answer in Arabic:", img, q])
-st.write(res.text)
+content = Image.open(f)
+is_image = True
+st.image(content, width=300)
