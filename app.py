@@ -28,9 +28,9 @@ st.stop()
 st.title("Study Assistant")
 f = st.file_uploader("Upload", type=["pdf", "jpg", "png"])
 if f:
-genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
-model = genai.GenerativeModel('gemini-1.5-flash')
-if f.type == "application/pdf":
+    genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    if f.type == "application/pdf":
 reader = PyPDF2.PdfReader(f)
 txt = "".join([p.extract_text() for p in reader.pages])
 q = st.chat_input("Ask...")
