@@ -8,7 +8,7 @@ st.markdown('<style>body{direction:rtl;text-align:right;}</style>', unsafe_allow
 pwd = st.text_input("أدخل الباسورد (4455)", type="password")
 
 if pwd == "4455":
-st.title("📚 مساعد الملازم الذكي")
+  st.title("📚 مساعد الملازم الذكي")
 f = st.file_uploader("ارفع الملزمة (PDF)", type="pdf")
 if f:
 pdf = PyPDF2.PdfReader(f)
