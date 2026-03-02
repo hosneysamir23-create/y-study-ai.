@@ -15,7 +15,7 @@ def check():
         st.session_state["auth"] = True
         with open("log.txt", "a") as f:
             f.write(f"{p} - {datetime.now()}\n")
-else:
+    else:
 st.error("Wrong Password")
 
 if not st.session_state["auth"]:
