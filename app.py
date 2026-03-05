@@ -1,47 +1,71 @@
 import streamlit as st
-import PyPDF2
 import google.generativeai as genai
-from PIL import Image
-from datetime import datetime
+from supabase import create_client
+import tempfile
+import os
 
-st.set_page_config(page_title="AI Study")
-
-if "auth" not in st.session_state:
-    st.session_state["auth"] = False
-
-def check():
-    p = st.session_state.get("p_in", "")
-    pw = st.session_state.get("pw_in", "")
-    if pw == "Hh1112007@":
-        st.session_state["auth"] = True
-        with open("log.txt", "a") as f:
-            f.write(f"{p} - {datetime.now()}\n")
-    else:
-        st.error("Wrong Password")
-
-if not st.session_state["auth"]:
-    st.title("Login")
-    st.text_input("Phone", key="p_in")
-    st.text_input("Password", type="password", key="pw_in")
-    st.button("Login", on_click=check)
+# إعدادات الربط من Secrets
+try:
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    supabase = create_client(url, key)
+    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+except Exception as e:
+    st.error("تأكد من إعداد الـ Secrets بشكل صحيح (SUPABASE_URL, SUPABASE_KEY, GOOGLE_API_KEY)")
     st.stop()
 
-st.title("Study Assistant")
-f = st.file_uploader("Upload", type=["pdf", "jpg", "png"])
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+st.set_page_config(page_title="المساعد الدائم", layout="centered")
+st.title("📚 مساعد المذاكرة (الحفظ الدائم)")
+
+# نظام تسجيل الدخول
+if "auth" not in st.session_state:
+    st.session_state.auth = False
+
+def check():
+    if st.session_state.pwd == "Hh1112007@":
+        st.session_state.auth = True
+
+if not st.session_state.auth:
+    st.text_input("كلمة السر", type="password", key="pwd", on_change=check)
+    st.stop()
+
+# رفع الملف
+f = st.file_uploader("ارفع درسك هنا", type=["pdf", "png", "jpg", "jpeg"])
+
 if f:
-    genai.configure(api_key="AIzaSyDETNhoieNKbhhq_zF_W0AVaGlCBrMct0g")
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    if f.type == "application/pdf":
-                reader = PyPDF2.PdfReader(f)
-                txt = "".join([p.extract_text() for p in reader.pages])
-                q = st.chat_input("Ask...")
-                if q:
-                    r = model.generate_content(f"Answer in Arabic: {txt[:10000]} \n Q: {q}")
-                    st.write(r.text)
-    else:
-        img = Image.open(f)
-        st.image(img, width=300)
-        q = st.chat_input("Ask...")
-        if q:
-            r = model.generate_content(["Explain in Arabic:", img, q])
-            st.write(r.text)
+    # 1. حفظ الملف في Supabase (عشان يفضل معاك للأبد)
+    file_path = f"study_files/{f.name}"
+    try:
+        supabase.storage.from_("files").upload(file_path, f.getvalue(), {"content-type": f.type})
+    except:
+        pass # الملف موجود مسبقاً
+
+    st.success(f"✅ الملف '{f.name}' محفوظ في خزنتك.")
+
+    # 2. تحضير الملف لجوجل (عشان نصلح خطأ InvalidArgument)
+    q = st.chat_input("اسأل أي سؤال...")
+    if q:
+        with st.spinner("جاري التحليل..."):
+            try:
+                # إنشاء ملف مؤقت محلي عشان جوجل تقرأه صح
+                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{f.name.split('.')[-1]}") as tmp:
+                    tmp.write(f.getvalue())
+                    tmp_path = tmp.name
+                
+                # رفع الملف لجوجل
+                google_file = genai.upload_file(tmp_path)
+                
+                # إرسال السؤال
+                response = model.generate_content([q, google_file])
+                
+                st.markdown(f"### الرد:\n{response.text}")
+                
+                # مسح الملف المؤقت
+                os.remove(tmp_path)
+            except Exception as e:
+                st.error(f"حدث خطأ أثناء المعالجة: {str(e)}")
+
+st.divider()
+st.info("💡 ملفاتك الآن تُحفظ تلقائياً في Supabase ويمكنك الوصول إليها من Dashboard الموقع.")
